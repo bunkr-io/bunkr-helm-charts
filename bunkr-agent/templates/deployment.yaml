@@ -11,6 +11,8 @@ spec:
       {{- include "bunkr-agent.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
       labels:
         {{- include "bunkr-agent.selectorLabels" . | nindent 8 }}
     spec:
@@ -27,6 +29,20 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: BUNKR_API_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "bunkr-agent.fullname" . }}
+                  key: client-secret
+            - name: BUNKR_API_URL
+              value: {{ .Values.apiUrl | quote }}
+            - name: BUNKR_API_CLIENT_ID
+              value: {{ required "A valid .Values.clientId entry required!" .Values.clientId | quote }}
+            - name: BUNKR_SOCKET_URL
+              value: {{ .Values.socketUrl | quote }}
+            - name: IDENTITY_PROVIDER_URL
+              value: {{ .Values.identityProviderUrl | quote }}
           ports:
             - name: http
               containerPort: 8080

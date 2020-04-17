@@ -41,8 +41,8 @@ $ helm create mychart
 $ helm package mychart
 ```
 
-4. Add a chart to the repository index with [`helm repo add`](https://helm.sh/docs/helm/helm_repo_add/):
+4. Add a chart to the repository index with [`helm repo index`](https://helm.sh/docs/helm/helm_repo_index/):
 
 ```sh
-$ helm repo add mychart https://bunkr-io.github.io/bunkr-helm-charts/
+$ helm repo index docs --url https://bunkr-io.github.io/bunkr-helm-charts/ --merge index.yaml
 ```
