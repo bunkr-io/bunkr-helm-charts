@@ -2,28 +2,109 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+## @param nameOverride - string - optional
+## Override name of app.
+#
+# nameOverride: ""
 
+## @param fullnameOverride - string - optional
+## Override the full qualified app name.
+#
+# fullnameOverride: ""
+
+## @param clientId - string - required
+## Set this to your Bunkr client ID before the Bunkr Agent runs.
+#
+clientId:
+
+## @param clientSecret - string - required
+## Set this to your Bunkr client SECRET before the Bunkr Agent runs.
+#
+clientSecret:
+
+## @param accountSecret - string - required
+## Set this to your Bunkr storage account SECRET before the Bunkr Agent runs.
+#
+accountSecret:
+
+## @param apiUrl - string - optional - default: 'https://api.bunkr.io/graphql/'
+## The api URL of the Bunkr intake to receive Bunkr Agent data from.
+#
+apiUrl: https://api.bunkr.io/graphql/
+
+## @param socketUrl - string - optional - default: 'wss://api.bunkr.io/socket/websocket/'
+## The socket URL of the Bunkr intake to receive Bunkr Agent data from.
+#
+socketUrl: wss://api.bunkr.io/socket/websocket/
+
+## @param identityProviderUrl - string - optional - default: 'https://auth.bunkr.io/'
+## The URL of the Bunkr identity provider.
+#
+identityProviderUrl: https://auth.bunkr.io/
+
+## @param identityProviderAudience - string - optional - default: 'https://api.bunkr.io/graphql/'
+## The api identifier being called by the identity provider.
+#
+identityProviderAudience: https://api.bunkr.io/graphql/
+
+## @param logLevel - string - required
+## Set logging verbosity, valid log levels are:
+## debug, info, warn, error
+#
+logLevel: WARN
+
+## @param image - object - required
+## Define the Bunkr Agent image to work with.
+#
 image:
+  ## @param repository - string - required
+  ## Define the repository to use.
+  #
   repository: bunkr/agent
+
+  ## @param pullPolicy - string - required
+  ## The Kubernetes pull policy.
+  #
   pullPolicy: IfNotPresent
 
+## @param pullSecrets - list of key:value strings - optional
+## It is possible to specify docker registry credentials,
+## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+#
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
 
+## @param replicas - integer - required
+## Specify the number of replicas, if > 1 it allow the Bunkr Agent to work in
+## HA mode.
+#
+replicaCount: 1
+
+## @param serviceAccount - object - required
+## Provide Bunkr Agent Deployment pod(s) service account configuration.
 serviceAccount:
-  # Specifies whether a service account should be created
+  ## @param created - boolean - required
+  ## If true, create & use service account resources.
+  #
   create: false
-  # Annotations to add to the service account
+
+  ## @param annotations - list of key:value strings - optional
+  ## Annotations to add to the service account resources.
+  #
   annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
+
+  ## @param serviceAccountName - string - required
+  ## Ignored if serviceAccount.create is false.
+  ## If not set and create is true, a name is generated using the fullname template.
+  #
   name:
 
 podSecurityContext: {}
   # fsGroup: 2000
 
+## @param securityContext - object - optional
+## You can modify the security context used to run the containers by
+## modifying the following configuations:
+#
 securityContext: {}
   # capabilities:
   #   drop:
@@ -32,37 +113,74 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+## Configuration for the service for the Bunkr Agent.
+#
 service:
+  ## @param type - string - optional
+  #
   type: ClusterIP
+
+  ## @param port - int - optional
+  #
   port: 80
 
 ingress:
+  ## @param enabled - boolean - required
+  ## If true, create & use ingress resources.
+  #
   enabled: false
+
+  ## @param annotations - list of key:value strings - optional
+  ## Annotations to add to the ingress resources.
+  #
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+
+  ## @param hosts - array - optional
+  ## Hosts configured for the ingress resources.
+  #
   hosts:
     - host: bunkr-agent.local
       paths: []
+
+  ## @param tls - array - optional
+  ## Secrets configurations for TLS configurations on the ingress resources.
+  #
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
-resources: {}
+## @param resources - object -required
+## Bunkr Agent resource requests and limits.
+#
+resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  limits:
+    cpu: 1000m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 64Mi
 
+## @param nodeSelector - object - optional
+## Allow the Bunkr Agent Deployment to schedule on selected nodes.
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+#
 nodeSelector: {}
 
+## @param tolerations - array - optional
+## Allow the Bunkr Agent to schedule on tainted nodes (requires Kubernetes >= 1.6).
+#
 tolerations: []
 
+## @param affinity - object - optional
+## Allow the Bunkr Agent to schedule using affinity rules.
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+#
 affinity: {}
