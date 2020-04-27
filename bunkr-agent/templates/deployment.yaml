@@ -35,11 +35,14 @@ spec:
                 secretKeyRef:
                   name: {{ include "bunkr-agent.fullname" . }}
                   key: client-secret
+<<<<<<< HEAD
             - name: BUNKR_STORAGE_ACCOUNT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: {{ include "bunkr-agent.fullname" . }}
                   key: account-secret
+=======
+>>>>>>> 208b4e41c07a4a911f68f5f63b9693ab961cb593
             - name: BUNKR_API_URL
               value: {{ .Values.apiUrl | quote }}
             - name: BUNKR_API_CLIENT_ID
@@ -48,8 +51,11 @@ spec:
               value: {{ .Values.socketUrl | quote }}
             - name: IDENTITY_PROVIDER_URL
               value: {{ .Values.identityProviderUrl | quote }}
+<<<<<<< HEAD
             - name: IDENTITY_PROVIDER_AUDIENCE
               value: {{ .Values.identityProviderAudience | quote }}
+=======
+>>>>>>> 208b4e41c07a4a911f68f5f63b9693ab961cb593
           ports:
             - name: http
               containerPort: 8080
